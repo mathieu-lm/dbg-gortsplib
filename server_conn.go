@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"log"
 
 	"github.com/bluenviron/gortsplib/v5/pkg/auth"
 	"github.com/bluenviron/gortsplib/v5/pkg/base"
@@ -227,6 +228,12 @@ func (sc *ServerConn) VerifyCredentials(
 		sc.authNonce = n
 	}
 
+	log.Printf("[DBG] VerifyCredentials called")
+	log.Printf("[DBG] Method=%s URI=%s", req.Method, req.URL)
+	log.Printf("[DBG] expectedUser=%s expectedPass=%s", expectedUser, expectedPass)
+	log.Printf("[DBG] authNonce=%s", sc.authNonce)
+	log.Printf("[DBG] Authorization header=%+v", req.Header["Authorization"])
+
 	err := auth.Verify(
 		req,
 		expectedUser,
@@ -234,6 +241,8 @@ func (sc *ServerConn) VerifyCredentials(
 		sc.s.AuthMethods,
 		serverAuthRealm,
 		sc.authNonce)
+
+	log.Printf("[DBG] auth.Verify returned err=%v", err)
 
 	return (err == nil)
 }
